@@ -1,16 +1,16 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
-import { useMutation } from '@tanstack/react-query';
-import { FcGoogle } from 'react-icons/fc';
-import { useRouter } from 'next/navigation';
-import { toast } from 'sonner';
+import Link from "next/link";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
+import { useMutation } from "@tanstack/react-query";
+import { FcGoogle } from "react-icons/fc";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
-import { login } from '@/features/auth/api/auth-api';
-import { Button } from '@/components/ui/button';
+import { login } from "@/features/auth/api/auth-api";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -18,8 +18,8 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import {
   Form,
   FormControl,
@@ -27,12 +27,12 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
-import { Separator } from '@/components/ui/separator';
+} from "@/components/ui/form";
+import { Separator } from "@/components/ui/separator";
 
 const loginSchema = z.object({
-  email: z.string().email('Please enter a valid email'),
-  password: z.string().min(6, 'Password must be at least 6 characters'),
+  email: z.email("Please enter a valid email"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
 });
 
 export type LoginFormValues = z.infer<typeof loginSchema>;
@@ -43,27 +43,27 @@ export function LoginForm() {
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      email: '',
-      password: '',
+      email: "",
+      password: "",
     },
   });
 
   const mutation = useMutation({
     mutationFn: login,
     onSuccess: (data) => {
-      console.log('Login successful:', data);
-      toast.success('Login successful');
-      router.push('/');
+      console.log("Login successful:", data);
+      toast.success("Login successful");
+      router.push("/");
     },
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     onError: (error: any) => {
-      toast.error(error.message || 'Login failed');
-      console.error('Login failed:', error);
+      toast.error(error.message || "Login failed");
+      console.error("Login failed:", error);
     },
   });
 
   const onGoogleSignIn = () => {
-    console.log('Google sign-in clicked');
+    console.log("Google sign-in clicked");
   };
 
   function onSubmit(values: LoginFormValues) {
@@ -71,12 +71,12 @@ export function LoginForm() {
   }
 
   return (
-    <Card className="w-full max-w-md mx-auto">
-      <CardHeader>
-        <CardTitle className="text-2xl font-bold">Login</CardTitle>
+    <Card className="w-full max-w-md mx-auto border-0 shadow-lg">
+      <CardHeader className="space-y-2 pb-4  text-center">
+        <CardTitle className="text-2xl font-semibold">Login</CardTitle>
         <CardDescription>Enter your credentials to sign in</CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="pb-4">
         <div className="flex flex-col gap-4">
           <Button
             variant="outline"
@@ -93,14 +93,14 @@ export function LoginForm() {
               <Separator />
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-background px-2 text-muted-foreground">
+              <span className="bg-background px-3 py-1 rounded-sm text-muted-foreground">
                 Or continue with email
               </span>
             </div>
           </div>
 
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
               <FormField
                 control={form.control}
                 name="email"
@@ -109,6 +109,7 @@ export function LoginForm() {
                     <FormLabel>Email</FormLabel>
                     <FormControl>
                       <Input
+                        className="placeholder-opacity-50"
                         placeholder="your.email@example.com"
                         type="email"
                         disabled={mutation.isPending}
@@ -144,22 +145,25 @@ export function LoginForm() {
                 className="w-full"
                 disabled={mutation.isPending}
               >
-                {mutation.isPending ? 'Signing in...' : 'Sign In'}
+                {mutation.isPending ? "Signing in..." : "Sign In"}
               </Button>
             </form>
           </Form>
         </div>
       </CardContent>
-      <CardFooter className="flex flex-col gap-2 text-sm">
+      <CardFooter className="flex flex-col gap-3 pt-0">
         <Link
           href="/forgot-password"
-          className="text-primary hover:underline self-start"
+          className="text-sm text-primary font-medium hover:underline self-start"
         >
           Forgot password?
         </Link>
-        <div className="text-muted-foreground">
-          Don&apos;t have an account?{' '}
-          <Link href="/auth/sign-up" className="text-primary hover:underline">
+        <div className="text-sm text-muted-foreground">
+          Don&apos;t have an account?{" "}
+          <Link
+            href="/auth/sign-up"
+            className="text-primary font-medium hover:underline"
+          >
             Sign up
           </Link>
         </div>

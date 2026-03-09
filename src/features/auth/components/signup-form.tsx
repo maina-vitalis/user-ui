@@ -1,17 +1,17 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useMutation } from '@tanstack/react-query';
-import { FcGoogle } from 'react-icons/fc';
-import { toast } from 'sonner';
-import * as z from 'zod';
-import { countries } from 'countries-list';
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
+import { FcGoogle } from "react-icons/fc";
+import { toast } from "sonner";
+import * as z from "zod";
+import { countries } from "countries-list";
 
-import { register } from '@/features/auth/api/auth-api';
-import { Button } from '@/components/ui/button';
+import { register } from "@/features/auth/api/auth-api";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -19,8 +19,8 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import {
   Form,
   FormControl,
@@ -28,27 +28,27 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from '@/components/ui/form';
-import { Separator } from '@/components/ui/separator';
+} from "@/components/ui/form";
+import { Separator } from "@/components/ui/separator";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from "@/components/ui/select";
 
 const signupSchema = z
   .object({
-    name: z.string().min(2, 'Name must be at least 2 characters'),
-    email: z.string().email('Invalid email address'),
-    country: z.string().min(2, 'Country must be at least 2 characters'),
-    password: z.string().min(6, 'Password must be at least 6 characters'),
+    name: z.string().min(2, "Name must be at least 2 characters"),
+    email: z.email("Invalid email address"),
+    country: z.string().min(2, "Country must be at least 2 characters"),
+    password: z.string().min(6, "Password must be at least 6 characters"),
     confirmPassword: z.string(),
   })
   .refine((values) => values.password === values.confirmPassword, {
     message: "Passwords don't match",
-    path: ['confirmPassword'],
+    path: ["confirmPassword"],
   });
 
 export type SignupFormValues = z.infer<typeof signupSchema>;
@@ -63,39 +63,40 @@ export function SignupForm() {
   const form = useForm<SignupFormValues>({
     resolver: zodResolver(signupSchema),
     defaultValues: {
-      name: '',
-      email: '',
-      country: '',
-      password: '',
-      confirmPassword: '',
+      name: "",
+      email: "",
+      country: "",
+      password: "",
+      confirmPassword: "",
     },
   });
 
   const mutation = useMutation({
     mutationFn: register,
     onSuccess: () => {
-      toast.success('Registration successful', {
-        description: 'Please verify your email to continue.',
+      toast.success("Registration successful", {
+        description: "Please verify your email to continue.",
       });
 
       const params = new URLSearchParams({
-        email: form.getValues('email'),
+        email: form.getValues("email"),
       });
       router.push(`/auth/otp-verification?${params.toString()}`);
     },
+
     onError: (error: unknown) => {
-      const fallbackMessage = 'Registration failed. Please try again.';
+      const fallbackMessage = "Registration failed. Please try again.";
       const message =
         (error as { response?: { data?: { message?: string } } })?.response
           ?.data?.message ?? fallbackMessage;
-      toast.error('Registration Failed', {
+      toast.error("Registration Failed", {
         description: message,
       });
     },
   });
 
   const handleGoogleSignIn = () => {
-    console.log('Google sign-in clicked');
+    console.log("Google sign-in clicked");
   };
 
   function onSubmit(values: SignupFormValues) {
@@ -103,12 +104,14 @@ export function SignupForm() {
   }
 
   return (
-    <Card className="w-full max-w-md mx-auto">
-      <CardHeader>
-        <CardTitle className="text-2xl font-bold">Create an account</CardTitle>
+    <Card className="w-full max-w-md mx-auto border-0 shadow-lg">
+      <CardHeader className="space-y-2 pb-4  text-center">
+        <CardTitle className="text-2xl font-semibold">
+          Create an account
+        </CardTitle>
         <CardDescription>Enter your details to get started</CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="pb-4">
         <div className="flex flex-col gap-4">
           <Button
             variant="outline"
@@ -125,14 +128,14 @@ export function SignupForm() {
               <Separator />
             </div>
             <div className="relative flex justify-center text-xs uppercase">
-              <span className="bg-background px-2 text-muted-foreground">
+              <span className="bg-background px-3 py-1 rounded-sm text-muted-foreground">
                 Or continue with email
               </span>
             </div>
           </div>
 
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
               <FormField
                 control={form.control}
                 name="name"
@@ -182,7 +185,7 @@ export function SignupForm() {
                       defaultValue={field.value}
                     >
                       <FormControl>
-                        <SelectTrigger>
+                        <SelectTrigger className="w-full">
                           <SelectValue placeholder="Select your country" />
                         </SelectTrigger>
                       </FormControl>
@@ -242,16 +245,19 @@ export function SignupForm() {
                 className="w-full"
                 disabled={mutation.isPending}
               >
-                {mutation.isPending ? 'Creating account...' : 'Sign Up'}
+                {mutation.isPending ? "Creating account..." : "Sign Up"}
               </Button>
             </form>
           </Form>
         </div>
       </CardContent>
-      <CardFooter>
+      <CardFooter className="pt-0">
         <div className="text-sm text-muted-foreground text-center w-full">
-          Already have an account?{' '}
-          <Link href="/auth/sign-in" className="text-primary hover:underline">
+          Already have an account?{" "}
+          <Link
+            href="/auth/sign-in"
+            className="text-primary font-medium hover:underline"
+          >
             Sign in
           </Link>
         </div>

@@ -1,23 +1,24 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { Heart, Search, LogOut, User } from 'lucide-react';
+import { useState } from "react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { Heart, Search, LogOut, User } from "lucide-react";
 
-import { useAuthStore } from '@/lib/store/useAuthStore';
-import api from '@/lib/api';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { useAuthStore } from "@/lib/store/useAuthStore";
+import api from "@/lib/api";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { ThemeSwitcher } from "@/components/theme-switcher";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+} from "@/components/ui/dropdown-menu";
 
 export function Header() {
   const [wishlistCount] = useState(3);
@@ -27,17 +28,17 @@ export function Header() {
 
   const handleLogout = async () => {
     try {
-      await api.post('/api/auth/logout');
+      await api.post("/api/auth/logout");
     } catch (error) {
-      console.error('Logout failed:', error);
+      console.error("Logout failed:", error);
     } finally {
       setAccessToken(null);
-      router.push('/');
+      router.push("/");
     }
   };
 
   const handleProfileClick = () => {
-    router.push('/my-account/profile');
+    router.push("/my-account/profile");
   };
 
   return (
@@ -72,9 +73,14 @@ export function Header() {
         </div>
 
         {/* Actions */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2">
+          <ThemeSwitcher />
           <div className="relative inline-flex items-center justify-center">
-            <Button variant="ghost" size="icon" className="rounded-full">
+            <Button
+              variant="outline"
+              size="icon"
+              className="rounded-full border-primary"
+            >
               <Heart className="h-5 w-5" />
               <span className="sr-only">Wishlist</span>
             </Button>
@@ -122,7 +128,11 @@ export function Header() {
             </DropdownMenu>
           ) : (
             <div className="flex items-center gap-2">
-              <Button variant="ghost" asChild className="hidden sm:inline-flex">
+              <Button
+                variant="outline"
+                asChild
+                className="hidden sm:inline-flex border-primary"
+              >
                 <Link href="/auth/sign-in">Sign In</Link>
               </Button>
               <Button asChild className="rounded-full">
