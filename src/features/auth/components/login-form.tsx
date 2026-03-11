@@ -29,6 +29,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Separator } from "@/components/ui/separator";
+import { useAuthStore } from "@/lib/store/useAuthStore";
 
 const loginSchema = z.object({
   email: z.email("Please enter a valid email"),
@@ -51,13 +52,18 @@ export function LoginForm() {
   const mutation = useMutation({
     mutationFn: login,
     onSuccess: (data) => {
-      console.log("Login successful:", data);
+      useAuthStore.getState().setAccessToken(data.accessToken);
       toast.success("Login successful");
       router.push("/");
     },
+
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     onError: (error: any) => {
-      toast.error(error.message || "Login failed");
+      console.log(error);
+      // Extract the actual error message from the backend response
+      const errorMessage =
+        error.data?.message || error.message || "Login failed";
+      toast.error(errorMessage);
       console.error("Login failed:", error);
     },
   });

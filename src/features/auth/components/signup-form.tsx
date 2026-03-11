@@ -84,11 +84,9 @@ export function SignupForm() {
       router.push(`/auth/otp-verification?${params.toString()}`);
     },
 
-    onError: (error: unknown) => {
+    onError: (error: any) => {
       const fallbackMessage = "Registration failed. Please try again.";
-      const message =
-        (error as { response?: { data?: { message?: string } } })?.response
-          ?.data?.message ?? fallbackMessage;
+      const message = error.data?.message ?? error.message ?? fallbackMessage;
       toast.error("Registration Failed", {
         description: message,
       });

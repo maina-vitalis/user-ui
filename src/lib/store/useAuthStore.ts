@@ -1,5 +1,5 @@
-import { create } from 'zustand';
-import { devtools } from 'zustand/middleware';
+import { create } from "zustand";
+import { devtools, persist } from "zustand/middleware";
 
 interface AuthState {
   accessToken: string | null;
@@ -10,14 +10,20 @@ interface AuthState {
 
 export const useAuthStore = create<AuthState>()(
   devtools(
-    (set) => ({
-      accessToken: null,
-      isInitialized: false,
-      setAccessToken: (token) => set({ accessToken: token }),
-      setIsInitialized: (value) => set({ isInitialized: value }),
-    }),
+    persist(
+      (set) => ({
+        accessToken: null,
+        isInitialized: false,
+        setAccessToken: (token) => set({ accessToken: token }),
+        setIsInitialized: (value) => set({ isInitialized: value }),
+      }),
+      {
+        name: "auth-storage",
+        partialize: (state) => ({}),
+      },
+    ),
     {
-      name: 'Auth store',
-    }
-  )
+      name: "Auth store",
+    },
+  ),
 );

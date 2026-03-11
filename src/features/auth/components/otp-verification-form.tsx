@@ -1,25 +1,25 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { useMutation } from '@tanstack/react-query';
-import { toast } from 'sonner';
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useMutation } from "@tanstack/react-query";
+import { toast } from "sonner";
 
-import { verifyOtp } from '@/features/auth/api/auth-api';
-import type { VerifyOtpPayload } from '@/features/auth/api/auth-api';
-import { Button } from '@/components/ui/button';
+import { verifyOtp } from "@/features/auth/api/auth-api";
+import type { VerifyOtpPayload } from "@/features/auth/api/auth-api";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card';
+} from "@/components/ui/card";
 import {
   InputOTP,
   InputOTPGroup,
   InputOTPSlot,
-} from '@/components/ui/input-otp';
+} from "@/components/ui/input-otp";
 
 interface OtpVerificationFormProps {
   readonly email: string;
@@ -31,7 +31,7 @@ const OTP_MAX_LENGTH = 5;
 
 export function OtpVerificationForm({ email }: OtpVerificationFormProps) {
   const router = useRouter();
-  const [otp, setOtp] = useState('');
+  const [otp, setOtp] = useState("");
   const [timeLeft, setTimeLeft] = useState(OTP_EXPIRY_TIME);
   const [canResend, setCanResend] = useState(false);
 
@@ -51,18 +51,19 @@ export function OtpVerificationForm({ email }: OtpVerificationFormProps) {
   const mutation = useMutation({
     mutationFn: (payload: VerifyOtpPayload) => verifyOtp(payload),
     onSuccess: () => {
-      toast.success('Email verified successfully!', {
-        description: 'You can now sign in to your account.',
+      toast.success("Email verified successfully!", {
+        description: "You can now sign in to your account.",
       });
       setTimeout(() => {
-        router.push('/');
+        router.push("/");
       }, 1500);
     },
-    onError: (error: unknown) => {
+    onError: (error: any) => {
       const errorMessage =
-        (error as { response?: { data?: { message?: string } } })?.response
-          ?.data?.message ?? 'Invalid OTP. Please try again.';
-      toast.error('Verification Failed', {
+        error.data?.message ??
+        error.message ??
+        "Invalid OTP. Please try again.";
+      toast.error("Verification Failed", {
         description: errorMessage,
       });
     },
@@ -72,8 +73,8 @@ export function OtpVerificationForm({ email }: OtpVerificationFormProps) {
     event.preventDefault();
 
     if (!otp || otp.length < MIN_OTP_LENGTH) {
-      toast.error('Invalid OTP', {
-        description: 'Please enter a valid OTP.',
+      toast.error("Invalid OTP", {
+        description: "Please enter a valid OTP.",
       });
       return;
     }
@@ -87,14 +88,14 @@ export function OtpVerificationForm({ email }: OtpVerificationFormProps) {
   const handleResendOtp = () => {
     setTimeLeft(OTP_EXPIRY_TIME);
     setCanResend(false);
-    toast.success('OTP Resent', {
-      description: 'A new OTP has been sent to your email.',
+    toast.success("OTP Resent", {
+      description: "A new OTP has been sent to your email.",
     });
   };
 
   const minutes = Math.floor(timeLeft / 60);
   const seconds = timeLeft % 60;
-  const formattedTime = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+  const formattedTime = `${minutes}:${seconds.toString().padStart(2, "0")}`;
 
   const isSubmitDisabled =
     mutation.isPending || timeLeft === 0 || otp.length < MIN_OTP_LENGTH;
@@ -106,7 +107,7 @@ export function OtpVerificationForm({ email }: OtpVerificationFormProps) {
       <CardHeader className="text-center">
         <CardTitle className="text-2xl font-bold">Verify Your Email</CardTitle>
         <CardDescription>
-          We sent a code to{' '}
+          We sent a code to{" "}
           <span className="font-medium text-foreground">{email}</span>
         </CardDescription>
       </CardHeader>
@@ -131,7 +132,7 @@ export function OtpVerificationForm({ email }: OtpVerificationFormProps) {
             <div className="text-sm text-center">
               {timeLeft > 0 ? (
                 <span className="text-muted-foreground">
-                  Code expires in{' '}
+                  Code expires in{" "}
                   <span className="font-medium text-foreground">
                     {formattedTime}
                   </span>
@@ -145,7 +146,7 @@ export function OtpVerificationForm({ email }: OtpVerificationFormProps) {
           </div>
 
           <Button type="submit" className="w-full" disabled={isSubmitDisabled}>
-            {mutation.isPending ? 'Verifying...' : 'Verify Email'}
+            {mutation.isPending ? "Verifying..." : "Verify Email"}
           </Button>
 
           <div className="flex flex-col items-center justify-center gap-2 mt-2">
@@ -159,7 +160,7 @@ export function OtpVerificationForm({ email }: OtpVerificationFormProps) {
               disabled={isResendDisabled}
               className="h-auto p-0 text-sm"
             >
-              {canResend ? 'Resend OTP' : `Resend in ${formattedTime}`}
+              {canResend ? "Resend OTP" : `Resend in ${formattedTime}`}
             </Button>
           </div>
         </form>

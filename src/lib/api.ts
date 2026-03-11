@@ -1,12 +1,12 @@
-import { useAuthStore } from './store/useAuthStore';
-import axios, { AxiosError } from 'axios';
+import { useAuthStore } from "./store/useAuthStore";
+import axios, { AxiosError } from "axios";
 
-const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL ?? '';
+const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL ?? "";
 
 const apiClient = axios.create({
   baseURL: baseUrl,
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
   withCredentials: true,
 });
@@ -21,6 +21,62 @@ apiClient.interceptors.request.use((config) => {
   return config;
 });
 
+//Response interceptor - Refreshing the tokens
+let isRefreshing = false;
+let failedQueue: Array<{
+  resolve: (token: any) => void;
+  reject: (reason?: any) => void;
+}> = [];
+
+const processingQueue = (token: string | null, error?: null | Error) => {
+  failedQueue.forEach((item) => {
+    if (error) {
+      item.reject(error);
+    } else {
+      item.resolve(token);
+    }
+  });
+};
+
+apiClient.interceptors.response.use(
+  (response) => response,
+  async (error: AxiosError) => {
+    const originalRequest = error.config as any;
+
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      if (isRefreshing) {
+        //queue the request when the refreshing is still in progress
+        return new Promise((resolve, reject) =>
+          failedQueue.push({ resolve, reject }),
+        ).then((token) => {
+          originalRequest.headers.Authorization = `Bearer ${token}`;
+          return apiClient(originalRequest);
+        });
+      }
+    }
+
+    isRefreshing = true;
+    originalRequest._retry = true;
+
+    try {
+      const response = await apiClient.post("/api/auth/refresh-token");
+      const accessToken = await response.data.access_token;
+      useAuthStore.getState().setAccessToken(accessToken);
+      processingQueue(accessToken);
+      originalRequest.headers.Authorization = `Bearer ${accessToken}`;
+      return apiClient(originalRequest);
+    } catch (error) {
+      processingQueue(null, error as Error);
+      useAuthStore.getState().setAccessToken(null);
+
+      //TODO explain the function of this promise
+      throw Promise.reject(error);
+    } finally {
+      isRefreshing = false;
+    }
+  },
+);
+
 // Response interceptor for error handling
 apiClient.interceptors.response.use(
   (response) => response,
@@ -29,7 +85,7 @@ apiClient.interceptors.response.use(
     const apiMessage =
       (error.response?.data as any)?.message ||
       error.message ||
-      'Request failed';
+      "Request failed";
 
     // 2. Create a proper Error instance
     const enhancedError = new Error(apiMessage);
@@ -42,7 +98,7 @@ apiClient.interceptors.response.use(
 
     // 4. Use Promise.reject instead of throw for interceptors
     return Promise.reject(enhancedError);
-  }
+  },
 );
 
 const api = {

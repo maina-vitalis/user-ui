@@ -1,39 +1,35 @@
-'use client';
+"use client";
 
-import React, { useEffect } from 'react';
-import { useRouter, usePathname } from 'next/navigation';
-import { refreshToken } from '../api/auth-api';
-import { useAuthStore } from '@/lib/store/useAuthStore';
+import React, { useEffect, useRef } from "react";
+import { refreshToken } from "../api/auth-api";
+import { useAuthStore } from "@/lib/store/useAuthStore";
 
 export default function RefreshToken({
   children,
 }: {
   readonly children: React.ReactNode;
 }) {
-  const setIsInitialized = useAuthStore((state) => state.setIsInitialized);
-  const router = useRouter();
-  const pathname = usePathname();
+  const { setIsInitialized, setAccessToken } = useAuthStore();
+  const hasRun = useRef(false);
 
   useEffect(() => {
+    if (hasRun.current) return;
     const restoreToken = async () => {
+      hasRun.current = true;
       try {
-        await refreshToken();
+        const data = await refreshToken();
+        useAuthStore.getState().setAccessToken(data.accessToken);
+        console.log(data, "refresh token");
       } catch (error) {
-        console.log(
-          'Token restore failed - user not authenticated / session expired',
-          error
-        );
-        // Only redirect to login if user is in a protected route like /my-account
-        if (pathname?.startsWith('/my-account')) {
-          router.push('/auth/sign-in');
-        }
-      } finally {
-        setIsInitialized(true);
+        console.log("Token refresh failed - clearing stored token", error);
+        setAccessToken(null);
       }
+
+      setIsInitialized(true);
     };
 
     restoreToken();
-  }, [setIsInitialized, router, pathname]);
+  }, []);
 
   return <>{children}</>;
 }

@@ -16,21 +16,16 @@ interface AuthResponse {
 
 export const login = async (loginData: LoginFormValues) => {
   const response: AuthResponse = await api.post("/api/auth/login", loginData);
-  useAuthStore.getState().setAccessToken(response.accessToken);
   return response;
 };
 
 export const register = async (registerData: SignupFormValues) => {
-  console.log(registerData, "register data");
   const response = await api.post("/api/auth/register", registerData);
-  console.log("debugging response");
-  console.log(response, "hello maina");
   return response;
 };
 
 export const verifyOtp = async (payload: VerifyOtpPayload) => {
   const response = await api.post("/api/auth/verify-otp", payload);
-  console.log(response);
   return response;
 };
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Heart, Search, LogOut, User } from "lucide-react";
@@ -10,7 +10,7 @@ import api from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { ThemeSwitcher } from "@/components/theme-switcher";
 import {
   DropdownMenu,
@@ -23,7 +23,7 @@ import {
 export function Header() {
   const [wishlistCount] = useState(3);
   const router = useRouter();
-  const accessToken = useAuthStore((state) => state.accessToken);
+  const { accessToken, isInitialized } = useAuthStore();
   const setAccessToken = useAuthStore((state) => state.setAccessToken);
 
   const handleLogout = async () => {
@@ -41,8 +41,62 @@ export function Header() {
     router.push("/my-account/profile");
   };
 
+  let authActions: ReactNode;
+
+  if (isInitialized && accessToken) {
+    authActions = (
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button variant="ghost" className="relative h-9 w-9 rounded-full">
+            <Avatar className="h-9 w-9 border">
+              <AvatarFallback className="bg-primary/10 text-primary">
+                U
+              </AvatarFallback>
+            </Avatar>
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent className="w-56" align="end" forceMount>
+          <DropdownMenuItem
+            onClick={handleProfileClick}
+            className="cursor-pointer"
+          >
+            <User className="mr-2 h-4 w-4" />
+            <span>Profile</span>
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem
+            onClick={handleLogout}
+            className="cursor-pointer text-destructive focus:text-destructive"
+          >
+            <LogOut className="mr-2 h-4 w-4" />
+            <span>Log out</span>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    );
+  } else if (isInitialized) {
+    authActions = (
+      <div className="flex items-center gap-2">
+        <Button
+          variant="outline"
+          asChild
+          className="hidden border-primary sm:inline-flex"
+        >
+          <Link href="/auth/sign-in">Sign In</Link>
+        </Button>
+        <Button asChild className="rounded-full">
+          <Link href="/auth/sign-up">Sign Up</Link>
+        </Button>
+      </div>
+    );
+  } else {
+    authActions = (
+      <div className="h-9 w-20 animate-pulse rounded-full bg-muted" />
+    );
+  }
+
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between gap-4">
         {/* Logo */}
         <Link
@@ -94,52 +148,7 @@ export function Header() {
             )}
           </div>
 
-          {accessToken ? (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  className="relative h-9 w-9 rounded-full"
-                >
-                  <Avatar className="h-9 w-9 border">
-                    <AvatarFallback className="bg-primary/10 text-primary">
-                      U
-                    </AvatarFallback>
-                  </Avatar>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent className="w-56" align="end" forceMount>
-                <DropdownMenuItem
-                  onClick={handleProfileClick}
-                  className="cursor-pointer"
-                >
-                  <User className="mr-2 h-4 w-4" />
-                  <span>Profile</span>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  onClick={handleLogout}
-                  className="cursor-pointer text-destructive focus:text-destructive"
-                >
-                  <LogOut className="mr-2 h-4 w-4" />
-                  <span>Log out</span>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          ) : (
-            <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                asChild
-                className="hidden sm:inline-flex border-primary"
-              >
-                <Link href="/auth/sign-in">Sign In</Link>
-              </Button>
-              <Button asChild className="rounded-full">
-                <Link href="/auth/sign-up">Sign Up</Link>
-              </Button>
-            </div>
-          )}
+          {authActions}
         </div>
       </div>
     </header>
