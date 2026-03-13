@@ -7,6 +7,7 @@ import { toast } from "sonner";
 
 import { verifyOtp } from "@/features/auth/api/auth-api";
 import type { VerifyOtpPayload } from "@/features/auth/api/auth-api";
+import { getApiErrorMessage } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -58,11 +59,11 @@ export function OtpVerificationForm({ email }: OtpVerificationFormProps) {
         router.push("/");
       }, 1500);
     },
-    onError: (error: any) => {
-      const errorMessage =
-        error.data?.message ??
-        error.message ??
-        "Invalid OTP. Please try again.";
+    onError: (error: unknown) => {
+      const errorMessage = getApiErrorMessage(
+        error,
+        "Invalid OTP. Please try again.",
+      );
       toast.error("Verification Failed", {
         description: errorMessage,
       });

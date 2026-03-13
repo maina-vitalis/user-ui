@@ -11,6 +11,7 @@ import * as z from "zod";
 import { countries } from "countries-list";
 
 import { register } from "@/features/auth/api/auth-api";
+import { getApiErrorMessage } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -84,9 +85,11 @@ export function SignupForm() {
       router.push(`/auth/otp-verification?${params.toString()}`);
     },
 
-    onError: (error: any) => {
-      const fallbackMessage = "Registration failed. Please try again.";
-      const message = error.data?.message ?? error.message ?? fallbackMessage;
+    onError: (error: unknown) => {
+      const message = getApiErrorMessage(
+        error,
+        "Registration failed. Please try again.",
+      );
       toast.error("Registration Failed", {
         description: message,
       });

@@ -38,7 +38,7 @@ export function Header() {
   };
 
   const handleProfileClick = () => {
-    router.push("/my-account/profile");
+    router.push("/dashboard");
   };
 
   let authActions: ReactNode;
@@ -61,7 +61,7 @@ export function Header() {
             className="cursor-pointer"
           >
             <User className="mr-2 h-4 w-4" />
-            <span>Profile</span>
+            <span>Dashboard</span>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem

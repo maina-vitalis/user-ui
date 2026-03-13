@@ -1,6 +1,46 @@
 import { useAuthStore } from "./store/useAuthStore";
 import axios, { AxiosError } from "axios";
 
+type NestExceptionResponse = {
+  statusCode?: number;
+  message?: string | string[];
+  error?: string;
+};
+
+export type ApiClientError = Error & {
+  status?: number;
+  data?: NestExceptionResponse;
+  isAxiosError?: boolean;
+};
+
+export const getApiErrorMessage = (
+  error: unknown,
+  fallback = "Request failed",
+) => {
+  if (error instanceof Error && error.message) {
+    return error.message;
+  }
+
+  if (typeof error === "object" && error !== null && "data" in error) {
+    const data = (error as { data?: NestExceptionResponse }).data;
+    const rawMessage = data?.message;
+
+    if (Array.isArray(rawMessage) && rawMessage.length > 0) {
+      return rawMessage.join(", ");
+    }
+
+    if (typeof rawMessage === "string" && rawMessage.trim().length > 0) {
+      return rawMessage;
+    }
+
+    if (typeof data?.error === "string" && data.error.trim().length > 0) {
+      return data.error;
+    }
+  }
+
+  return fallback;
+};
+
 const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL ?? "";
 
 const apiClient = axios.create({
@@ -53,27 +93,27 @@ apiClient.interceptors.response.use(
           return apiClient(originalRequest);
         });
       }
+
+      isRefreshing = true;
+      originalRequest._retry = true;
+
+      try {
+        const response = await apiClient.post("/api/auth/refresh-token");
+        const accessToken = await response.data.access_token;
+        useAuthStore.getState().setAccessToken(accessToken);
+        processingQueue(accessToken);
+        originalRequest.headers.Authorization = `Bearer ${accessToken}`;
+        return apiClient(originalRequest);
+      } catch (error) {
+        processingQueue(null, error as Error);
+        useAuthStore.getState().setAccessToken(null);
+
+        return Promise.reject(error);
+      } finally {
+        isRefreshing = false;
+      }
     }
-
-    isRefreshing = true;
-    originalRequest._retry = true;
-
-    try {
-      const response = await apiClient.post("/api/auth/refresh-token");
-      const accessToken = await response.data.access_token;
-      useAuthStore.getState().setAccessToken(accessToken);
-      processingQueue(accessToken);
-      originalRequest.headers.Authorization = `Bearer ${accessToken}`;
-      return apiClient(originalRequest);
-    } catch (error) {
-      processingQueue(null, error as Error);
-      useAuthStore.getState().setAccessToken(null);
-
-      //TODO explain the function of this promise
-      throw Promise.reject(error);
-    } finally {
-      isRefreshing = false;
-    }
+    return Promise.reject(error);
   },
 );
 
@@ -81,20 +121,30 @@ apiClient.interceptors.response.use(
 apiClient.interceptors.response.use(
   (response) => response,
   (error: AxiosError) => {
-    // 1. Extract the message safely
-    const apiMessage =
-      (error.response?.data as any)?.message ||
-      error.message ||
-      "Request failed";
+    const responseData = error.response?.data as
+      | NestExceptionResponse
+      | undefined;
+    const rawMessage = responseData?.message;
+
+    let apiMessage = "Request failed";
+    if (Array.isArray(rawMessage)) {
+      apiMessage = rawMessage.join(", ");
+    } else if (typeof rawMessage === "string") {
+      apiMessage = rawMessage;
+    } else if (responseData?.error) {
+      apiMessage = responseData.error;
+    } else if (error.message) {
+      apiMessage = error.message;
+    }
 
     // 2. Create a proper Error instance
-    const enhancedError = new Error(apiMessage);
+    const enhancedError = new Error(apiMessage) as ApiClientError;
 
     // 3. Attach metadata to the Error object instead of replacing it
     // This preserves the Stack Trace while giving you the data you need
-    (enhancedError as any).status = error.response?.status;
-    (enhancedError as any).data = error.response?.data;
-    (enhancedError as any).isAxiosError = true;
+    enhancedError.status = responseData?.statusCode ?? error.response?.status;
+    enhancedError.data = responseData;
+    enhancedError.isAxiosError = true;
 
     // 4. Use Promise.reject instead of throw for interceptors
     return Promise.reject(enhancedError);
@@ -103,7 +153,8 @@ apiClient.interceptors.response.use(
 
 const api = {
   async post<T>(path: string, body?: unknown): Promise<T> {
-    const response = await apiClient.post<T>(path, body);
+    const response = await apiClient.post(path, body);
+    console.log(response.data, "Api post");
     return response.data;
   },
 

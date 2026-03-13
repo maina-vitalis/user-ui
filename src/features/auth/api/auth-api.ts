@@ -1,7 +1,6 @@
 import type { LoginFormValues } from "@/features/auth/components/login-form";
 import type { SignupFormValues } from "@/features/auth/components/signup-form";
 import api from "@/lib/api";
-import { useAuthStore } from "@/lib/store/useAuthStore";
 
 export type VerifyOtpPayload = {
   email: string;
@@ -16,6 +15,7 @@ interface AuthResponse {
 
 export const login = async (loginData: LoginFormValues) => {
   const response: AuthResponse = await api.post("/api/auth/login", loginData);
+  console.log(response, "login");
   return response;
 };
 
@@ -31,6 +31,5 @@ export const verifyOtp = async (payload: VerifyOtpPayload) => {
 
 export const refreshToken = async () => {
   const response: AuthResponse = await api.post("/api/auth/refresh-token");
-  useAuthStore.getState().setAccessToken(response.accessToken);
   return response;
 };

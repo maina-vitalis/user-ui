@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 import { login } from "@/features/auth/api/auth-api";
+import { getApiErrorMessage } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -57,14 +58,9 @@ export function LoginForm() {
       router.push("/");
     },
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    onError: (error: any) => {
-      console.log(error);
-      // Extract the actual error message from the backend response
-      const errorMessage =
-        error.data?.message || error.message || "Login failed";
+    onError: (error: unknown) => {
+      const errorMessage = getApiErrorMessage(error, "Login failed");
       toast.error(errorMessage);
-      console.error("Login failed:", error);
     },
   });
 
