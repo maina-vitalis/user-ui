@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   ChevronsUpDown,
   LogOut,
@@ -24,6 +26,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import { useAuthStore } from "@/lib/store/useAuthStore";
+import api from "@/lib/api";
 
 interface SidebarNavUserProps {
   user?: {
@@ -35,13 +39,43 @@ interface SidebarNavUserProps {
 }
 
 const tierConfig = {
-  silver: { label: "Silver", className: "bg-slate-400/20 text-slate-400 border-slate-400/30" },
-  gold: { label: "Gold", className: "bg-amber-400/20 text-amber-500 border-amber-400/30" },
-  platinum: { label: "Platinum", className: "bg-indigo-400/20 text-indigo-400 border-indigo-400/30" },
+  silver: {
+    label: "Silver",
+    className: "bg-slate-400/20 text-slate-400 border-slate-400/30",
+  },
+  gold: {
+    label: "Gold",
+    className: "bg-amber-400/20 text-amber-500 border-amber-400/30",
+  },
+  platinum: {
+    label: "Platinum",
+    className: "bg-indigo-400/20 text-indigo-400 border-indigo-400/30",
+  },
 };
 
-export function SidebarNavUser({ user }: SidebarNavUserProps) {
+export function SidebarNavUser({ user }: Readonly<SidebarNavUserProps>) {
   const { isMobile } = useSidebar();
+  const router = useRouter();
+  const setAccessToken = useAuthStore((state) => state.setAccessToken);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+
+  const handleLogout = async () => {
+    if (isLoggingOut) {
+      return;
+    }
+
+    setIsLoggingOut(true);
+
+    try {
+      await api.post("/api/auth/logout");
+    } catch (error) {
+      console.error("Logout failed:", error);
+    } finally {
+      setAccessToken(null);
+      setIsLoggingOut(false);
+      router.push("/");
+    }
+  };
 
   const displayUser = user ?? {
     name: "Vitalis Maina",
@@ -135,9 +169,13 @@ export function SidebarNavUser({ user }: SidebarNavUserProps) {
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="rounded-lg cursor-pointer text-destructive focus:text-destructive focus:bg-destructive/10">
+            <DropdownMenuItem
+              className="rounded-lg cursor-pointer text-destructive focus:text-destructive focus:bg-destructive/10"
+              onClick={handleLogout}
+              disabled={isLoggingOut}
+            >
               <LogOut className="mr-2 h-4 w-4" />
-              Log out
+              {isLoggingOut ? "Logging out..." : "Log out"}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

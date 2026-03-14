@@ -14,7 +14,7 @@ import {
 export default function DashboardLayout({
   children,
 }: {
-  children: React.ReactNode;
+  readonly children: React.ReactNode;
 }) {
   return (
     <AuthGuard>
@@ -26,7 +26,10 @@ export default function DashboardLayout({
             <header className="sticky top-0 z-30 flex h-16 shrink-0 items-center justify-between gap-2 border-b border-border/60 bg-background/80 px-4 backdrop-blur-md transition-all duration-300">
               <div className="flex items-center gap-2">
                 <SidebarTrigger className="-ml-1 h-9 w-9 rounded-xl hover:bg-accent hover:text-accent-foreground text-muted-foreground transition-all duration-200" />
-                <Separator orientation="vertical" className="mr-2 h-5 bg-border/60" />
+                <Separator
+                  orientation="vertical"
+                  className="mr-2 h-5 bg-border/60"
+                />
                 <Breadcrumb>
                   <BreadcrumbList className="sm:gap-2">
                     <BreadcrumbItem className="hidden sm:block">

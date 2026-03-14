@@ -73,16 +73,20 @@ export function SidebarNavItems() {
                     group relative h-10 rounded-xl transition-all duration-200
                     ${
                       isActive
-                        ? "bg-primary text-primary-foreground shadow-sm font-medium"
+                        ? "bg-primary text-primary shadow-sm font-medium"
                         : "hover:bg-accent/60 hover:text-accent-foreground"
                     }
                   `}
                 >
                   <Link href={item.href} className="flex items-center gap-3">
                     <item.icon
-                      className={`h-4 w-4 shrink-0 transition-transform duration-200 group-hover:scale-110 ${isActive ? "text-primary-foreground" : "text-muted-foreground group-hover:text-foreground"}`}
+                      className={`h-4 w-4 shrink-0 transition-transform duration-200 group-hover:scale-110 ${isActive ? "text-primary" : "text-muted-foreground group-hover:text-foreground"}`}
                     />
-                    <span className="flex-1 font-medium">{item.label}</span>
+                    <span
+                      className={`flex-1 font-medium ${isActive ? "text-primary" : "text-foreground"}`}
+                    >
+                      {item.label}
+                    </span>
                     {item.badge && (
                       <Badge
                         variant={item.badgeVariant ?? "secondary"}
