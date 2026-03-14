@@ -1,11 +1,14 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Noto_Sans } from "next/font/google";
 import "./globals.css";
 import QueryProvider from "@/lib/react-query-provider";
 import { ThemeProvider } from "@/lib/theme-provider";
 import RefreshToken from "@/features/auth/components/refresh-token";
 import { Header } from "@/components/layout/header";
 import { Toaster } from "@/components/ui/sonner";
+import { cn } from "@/lib/utils";
+
+const notoSans = Noto_Sans({variable:'--font-sans'});
 
 export const metadata: Metadata = {
   title: "ESHOP — Multivendor Marketplace",
@@ -21,7 +24,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning className={cn("font-sans", notoSans.variable)}>
       <body className={`${inter.className} antialiased`}>
         <ThemeProvider>
           <QueryProvider>
