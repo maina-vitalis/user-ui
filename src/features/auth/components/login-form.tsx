@@ -9,7 +9,6 @@ import { FcGoogle } from "react-icons/fc";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
-import { login } from "@/features/auth/api/auth-api";
 import { getApiErrorMessage } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import {
@@ -30,17 +29,19 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Separator } from "@/components/ui/separator";
-import { useAuthStore } from "@/lib/store/useAuthStore";
+import { getMe, login } from "@/features/auth/api/auth-api";
+import {useAuthStore} from "@/lib/store/useAuthStore";
+
 
 const loginSchema = z.object({
   email: z.email("Please enter a valid email"),
   password: z.string().min(6, "Password must be at least 6 characters"),
 });
-
 export type LoginFormValues = z.infer<typeof loginSchema>;
 
 export function LoginForm() {
   const router = useRouter();
+  const{setUser, setAuthStatus} = useAuthStore()
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -52,10 +53,12 @@ export function LoginForm() {
 
   const mutation = useMutation({
     mutationFn: login,
-    onSuccess: (data) => {
-      useAuthStore.getState().setAccessToken(data.accessToken);
+    onSuccess: async (data) => {
+      const me = await getMe();
+      setUser(me);
+      setAuthStatus("authenticated");
       toast.success("Login successful");
-      router.push("/");
+      router.push("/dashboard");
     },
 
     onError: (error: unknown) => {

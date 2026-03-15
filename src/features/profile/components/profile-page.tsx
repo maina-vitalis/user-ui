@@ -26,15 +26,15 @@ const DEMO_PROFILE = {
 
 export function ProfilePage() {
   const router = useRouter();
-  const accessToken = useAuthStore((state) => state.accessToken);
+  const { user } = useAuthStore();
 
   useEffect(() => {
-    if (!accessToken) {
+    if (!user) {
       router.replace("/auth/sign-in");
     }
-  }, [accessToken, router]);
+  }, [user, router]);
 
-  if (!accessToken) {
+  if (!user) {
     return null;
   }
 

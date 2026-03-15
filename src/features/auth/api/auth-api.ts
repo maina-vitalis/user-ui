@@ -1,5 +1,5 @@
-import type { LoginFormValues } from "@/features/auth/components/login-form";
-import type { SignupFormValues } from "@/features/auth/components/signup-form";
+import type {LoginFormValues} from "@/features/auth/components/login-form";
+import type {SignupFormValues} from "@/features/auth/components/signup-form";
 import api from "@/lib/api";
 
 export type VerifyOtpPayload = {
@@ -13,6 +13,18 @@ interface AuthResponse {
   status: string;
 }
 
+export interface MeResponse {
+  id: string;
+  email: string;
+  firstName?: string;
+  lastName?: string;
+  roles?: string[];
+}
+
+export const getMe = async () => {
+  return api.get<MeResponse>("/api/users/me");
+};
+
 export const login = async (loginData: LoginFormValues) => {
   const response: AuthResponse = await api.post("/api/auth/login", loginData);
   console.log(response, "login");
@@ -20,13 +32,11 @@ export const login = async (loginData: LoginFormValues) => {
 };
 
 export const register = async (registerData: SignupFormValues) => {
-  const response = await api.post("/api/auth/register", registerData);
-  return response;
+  return await api.post("/api/auth/register", registerData);
 };
 
 export const verifyOtp = async (payload: VerifyOtpPayload) => {
-  const response = await api.post("/api/auth/verify-otp", payload);
-  return response;
+  return await api.post("/api/auth/verify-otp", payload);
 };
 
 export const refreshToken = async () => {

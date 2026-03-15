@@ -3,7 +3,7 @@
 import type { ReactNode } from "react";
 import { usePathname } from "next/navigation";
 
-import { Header } from "@/components/layout/header";
+import { Navbar } from "@/components/layout/navbar";
 
 interface AppShellProps {
   children: ReactNode;
@@ -11,11 +11,11 @@ interface AppShellProps {
 
 export function AppShell({ children }: Readonly<AppShellProps>) {
   const pathname = usePathname();
-  const hideHeader = pathname.startsWith("/dashboard");
+  const hideHeader = pathname === "/" || pathname.startsWith("/dashboard");
 
   return (
     <div className="relative flex min-h-screen flex-col">
-      {!hideHeader && <Header />}
+      {!hideHeader && <Navbar />}
       <main className="flex-1">{children}</main>
     </div>
   );

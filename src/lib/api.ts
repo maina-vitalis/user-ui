@@ -51,16 +51,6 @@ const apiClient = axios.create({
   withCredentials: true,
 });
 
-// request interceptor- setting the bearer token
-apiClient.interceptors.request.use((config) => {
-  const accessToken = useAuthStore.getState().accessToken;
-
-  if (accessToken) {
-    config.headers.Authorization = `Bearer ${accessToken}`;
-  }
-  return config;
-});
-
 //Response interceptor - Refreshing the tokens
 let isRefreshing = false;
 let failedQueue: Array<{
@@ -89,7 +79,6 @@ apiClient.interceptors.response.use(
         return new Promise((resolve, reject) =>
           failedQueue.push({ resolve, reject }),
         ).then((token) => {
-          originalRequest.headers.Authorization = `Bearer ${token}`;
           return apiClient(originalRequest);
         });
       }
@@ -98,15 +87,11 @@ apiClient.interceptors.response.use(
       originalRequest._retry = true;
 
       try {
-        const response = await apiClient.post("/api/auth/refresh-token");
-        const accessToken = await response.data.access_token;
-        useAuthStore.getState().setAccessToken(accessToken);
-        processingQueue(accessToken);
-        originalRequest.headers.Authorization = `Bearer ${accessToken}`;
+        await apiClient.post("/api/auth/refresh-token");
+        processingQueue(null);
         return apiClient(originalRequest);
       } catch (error) {
         processingQueue(null, error as Error);
-        useAuthStore.getState().setAccessToken(null);
 
         return Promise.reject(error);
       } finally {

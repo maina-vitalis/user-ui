@@ -8,6 +8,7 @@ import { AppShell } from "@/components/layout/app-shell";
 import { Toaster } from "@/components/ui/sonner";
 import { cn } from "@/lib/utils";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import React from "react";
 
 const notoSans = Noto_Sans({ variable: "--font-sans" });
 
