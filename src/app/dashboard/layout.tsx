@@ -9,12 +9,18 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import { requireUser } from "@/lib/auth.ts/server";
+import { redirect } from "next/navigation";
 
-export default function DashboardLayout({
+export default async function DashboardLayout({
   children,
 }: {
   readonly children: React.ReactNode;
 }) {
+  // const user = await requireUser();
+  // if (!user) {
+  //   return redirect("/");
+  // }
   return (
     <SidebarProvider>
       <div className="flex min-h-screen w-full bg-muted/40 dark:bg-background">
