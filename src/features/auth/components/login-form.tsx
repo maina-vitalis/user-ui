@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useMutation } from "@tanstack/react-query";
 import { FcGoogle } from "react-icons/fc";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 
 import { getApiErrorMessage } from "@/lib/api";
@@ -30,8 +30,7 @@ import {
 } from "@/components/ui/form";
 import { Separator } from "@/components/ui/separator";
 import { getMe, login } from "@/features/auth/api/auth-api";
-import {useAuthStore} from "@/lib/store/useAuthStore";
-
+import { useAuthStore } from "@/lib/store/useAuthStore";
 
 const loginSchema = z.object({
   email: z.email("Please enter a valid email"),
@@ -41,7 +40,8 @@ export type LoginFormValues = z.infer<typeof loginSchema>;
 
 export function LoginForm() {
   const router = useRouter();
-  const{setUser, setAuthStatus} = useAuthStore()
+  const searchParams = useSearchParams();
+  const { setUser, setAuthStatus } = useAuthStore();
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -58,7 +58,8 @@ export function LoginForm() {
       setUser(me);
       setAuthStatus("authenticated");
       toast.success("Login successful");
-      router.push("/dashboard");
+      const redirectPath = searchParams.get("redirect");
+      router.push(redirectPath || "/dashboard");
     },
 
     onError: (error: unknown) => {
