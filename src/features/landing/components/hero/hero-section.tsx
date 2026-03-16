@@ -9,10 +9,10 @@ import {
   HoverCardContent,
   HoverCardTrigger,
 } from "@/components/ui/hover-card";
-import { useAuthStore } from "@/lib/store/useAuthStore";
+import { useAppSelector } from "@/store/hooks";
 
 export function HeroSection() {
-  const { user } = useAuthStore();
+  const user = useAppSelector((state) => state.auth.user);
 
   return (
     <section

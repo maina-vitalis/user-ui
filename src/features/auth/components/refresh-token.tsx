@@ -2,14 +2,15 @@
 
 import React, { useEffect, useRef } from "react";
 import { getMe } from "../api/auth-api";
-import { useAuthStore } from "@/lib/store/useAuthStore";
+import { useAppDispatch } from "@/store/hooks";
+import { clearAuth, setAuthenticated } from "@/store/slices/auth-slice";
 
 export default function RefreshToken({
   children,
 }: {
   readonly children: React.ReactNode;
 }) {
-  const { setAuthenticated, clearAuth } = useAuthStore();
+  const dispatch = useAppDispatch();
   const hasRun = useRef(false);
 
   useEffect(() => {
@@ -19,14 +20,14 @@ export default function RefreshToken({
     const bootstrapAuth = async () => {
       try {
         const me = await getMe();
-        setAuthenticated(me);
+        dispatch(setAuthenticated(me));
       } catch {
-        clearAuth();
+        dispatch(clearAuth());
       }
     };
 
     bootstrapAuth();
-  }, [setAuthenticated, clearAuth]);
+  }, [dispatch]);
 
   return <>{children}</>;
 }

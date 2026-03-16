@@ -12,7 +12,6 @@ import {
 import { SidebarNavItems } from "./SidebarNavItems";
 import { SidebarNavUser } from "./SidebarNavUser";
 import { ShoppingCart, Sparkles } from "lucide-react";
-import { useAuthStore } from "@/lib/store/useAuthStore";
 
 export function DashboardSidebar() {
   return (

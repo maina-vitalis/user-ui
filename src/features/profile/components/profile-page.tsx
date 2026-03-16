@@ -15,7 +15,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { useAuthStore } from "@/lib/store/useAuthStore";
+import { useAppSelector } from "@/store/hooks";
 
 const DEMO_PROFILE = {
   name: "Shop User",
@@ -26,7 +26,7 @@ const DEMO_PROFILE = {
 
 export function ProfilePage() {
   const router = useRouter();
-  const { user } = useAuthStore();
+  const user = useAppSelector((state) => state.auth.user);
 
   useEffect(() => {
     if (!user) {

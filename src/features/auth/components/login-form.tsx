@@ -30,7 +30,8 @@ import {
 } from "@/components/ui/form";
 import { Separator } from "@/components/ui/separator";
 import { login } from "@/features/auth/api/auth-api";
-import { useAuthStore } from "@/lib/store/useAuthStore";
+import { useAppDispatch } from "@/store/hooks";
+import { setAuthenticated } from "@/store/slices/auth-slice";
 
 const loginSchema = z.object({
   email: z.email("Please enter a valid email"),
@@ -41,7 +42,7 @@ export type LoginFormValues = z.infer<typeof loginSchema>;
 export function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { setAuthenticated } = useAuthStore();
+  const dispatch = useAppDispatch();
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -54,7 +55,7 @@ export function LoginForm() {
   const mutation = useMutation({
     mutationFn: login,
     onSuccess: async (data) => {
-      setAuthenticated(data.user);
+      dispatch(setAuthenticated(data.user));
       toast.success("Login successful");
       const redirectPath = searchParams.get("redirect");
       router.push(redirectPath || "/dashboard");

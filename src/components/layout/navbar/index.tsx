@@ -6,7 +6,8 @@ import { useRouter } from "next/navigation";
 import { Heart, LogOut, Search, User } from "lucide-react";
 
 import api from "@/lib/api";
-import { useAuthStore } from "@/lib/store/useAuthStore";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
+import { clearAuth } from "@/store/slices/auth-slice";
 import { ThemeSwitcher } from "@/components/theme-switcher";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -32,7 +33,8 @@ const navbarLinks: NavbarLink[] = navLinks.map((label) => ({
 export function Navbar() {
   const [wishlistCount] = useState(3);
   const router = useRouter();
-  const { user, authStatus, clearAuth } = useAuthStore();
+  const dispatch = useAppDispatch();
+  const { user, authStatus } = useAppSelector((state) => state.auth);
 
   const handleLogout = async () => {
     try {
@@ -40,7 +42,7 @@ export function Navbar() {
     } catch (error) {
       console.error("Logout failed:", error);
     } finally {
-      clearAuth();
+      dispatch(clearAuth());
       router.push("/");
     }
   };

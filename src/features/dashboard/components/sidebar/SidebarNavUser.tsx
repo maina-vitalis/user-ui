@@ -27,7 +27,8 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import api from "@/lib/api";
-import { useAuthStore } from "@/lib/store/useAuthStore";
+import { useAppDispatch } from "@/store/hooks";
+import { clearAuth } from "@/store/slices/auth-slice";
 
 interface SidebarNavUserProps {
   user?: {
@@ -57,7 +58,7 @@ export function SidebarNavUser({ user }: Readonly<SidebarNavUserProps>) {
   const { isMobile } = useSidebar();
   const router = useRouter();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
-  const { clearAuth } = useAuthStore();
+  const dispatch = useAppDispatch();
 
   const handleLogout = async () => {
     if (isLoggingOut) {
@@ -71,7 +72,7 @@ export function SidebarNavUser({ user }: Readonly<SidebarNavUserProps>) {
     } catch (error) {
       console.error("Logout failed:", error);
     } finally {
-      clearAuth();
+      dispatch(clearAuth());
       setIsLoggingOut(false);
       router.push("/");
     }
