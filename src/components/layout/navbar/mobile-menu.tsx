@@ -61,7 +61,7 @@ export function MobileMenu({
         <SheetClose asChild>
           <Button
             variant="outline"
-            className="w-full justify-start rounded-full"
+            className="w-full justify-start"
             onClick={onProfileClick}
           >
             <User className="h-4 w-4" />
@@ -71,7 +71,7 @@ export function MobileMenu({
         <SheetClose asChild>
           <Button
             variant="ghost"
-            className="w-full justify-start rounded-full text-destructive hover:text-destructive"
+            className="w-full justify-start text-destructive hover:text-destructive"
             onClick={onLogout}
           >
             <LogOut className="h-4 w-4" />
@@ -86,19 +86,13 @@ export function MobileMenu({
         <SheetClose asChild>
           <Link
             href="/auth/sign-in"
-            className={cn(
-              buttonVariants({ variant: "outline" }),
-              "w-full rounded-full",
-            )}
+            className={cn(buttonVariants({ variant: "outline" }), "w-full")}
           >
             Sign In
           </Link>
         </SheetClose>
         <SheetClose asChild>
-          <Link
-            href="/auth/sign-up"
-            className={cn(buttonVariants(), "w-full rounded-full")}
-          >
+          <Link href="/auth/sign-up" className={cn(buttonVariants(), "w-full")}>
             Become a Seller
           </Link>
         </SheetClose>
@@ -131,7 +125,7 @@ export function MobileMenu({
             <Input
               type="search"
               placeholder="Search products..."
-              className="rounded-full pr-10"
+              className="pr-10"
             />
             <Search className="pointer-events-none absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
           </div>
@@ -151,10 +145,7 @@ export function MobileMenu({
 
           <Separator />
 
-          <Button
-            variant="outline"
-            className="w-full justify-start rounded-full"
-          >
+          <Button variant="outline" className="w-full justify-start">
             <Heart className="h-4 w-4" />
             Wishlist
             {wishlistCount > 0 ? (
