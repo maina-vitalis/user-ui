@@ -55,6 +55,7 @@ export function LoginForm() {
     mutationFn: login,
     onSuccess: async (data) => {
       const me = await getMe();
+      console.log(me);
       setUser(me);
       setAuthStatus("authenticated");
       toast.success("Login successful");

@@ -12,7 +12,6 @@ export const requireUser = async () => {
       cache: "no-store",
     },
   );
-  console.log(res.ok);
 
   if (!res.ok) {
     return redirect("/auth/sign-in");

@@ -27,6 +27,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import api from "@/lib/api";
+import { useAuthStore } from "@/lib/store/useAuthStore";
 
 interface SidebarNavUserProps {
   user?: {
@@ -56,6 +57,7 @@ export function SidebarNavUser({ user }: Readonly<SidebarNavUserProps>) {
   const { isMobile } = useSidebar();
   const router = useRouter();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const { setUser, setAuthStatus } = useAuthStore();
 
   const handleLogout = async () => {
     if (isLoggingOut) {
@@ -69,6 +71,8 @@ export function SidebarNavUser({ user }: Readonly<SidebarNavUserProps>) {
     } catch (error) {
       console.error("Logout failed:", error);
     } finally {
+      setUser(null);
+      setAuthStatus("guest");
       setIsLoggingOut(false);
       router.push("/");
     }

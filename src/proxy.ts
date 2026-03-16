@@ -4,12 +4,7 @@ import type { NextRequest } from "next/server";
 const protectedRoutes = ["/dashboard"];
 const authRoutes = ["/auth/sign-in", "/auth/sign-up"];
 
-const SESSION_COOKIE_NAMES = [
-  "access_token",
-  "refresh_token",
-  "accessToken",
-  "refreshToken",
-] as const;
+const SESSION_COOKIE_NAMES = ["access_token", "refresh_token"] as const;
 
 export function proxy(request: NextRequest) {
   const hasSession = SESSION_COOKIE_NAMES.some((cookieName) =>

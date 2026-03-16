@@ -17,10 +17,10 @@ export default async function DashboardLayout({
 }: {
   readonly children: React.ReactNode;
 }) {
-  // const user = await requireUser();
-  // if (!user) {
-  //   return redirect("/");
-  // }
+  const user = await requireUser();
+  if (!user) {
+    return redirect("/auth/sign-in");
+  }
   return (
     <SidebarProvider>
       <div className="flex min-h-screen w-full bg-muted/40 dark:bg-background">
@@ -56,7 +56,7 @@ export default async function DashboardLayout({
           </header>
 
           {/* Page Content */}
-          <div className="flex-1 overflow-y-auto p-4 sm:p-6 md:p-8 max-w-[1600px] mx-auto w-full">
+          <div className="flex-1 overflow-y-auto p-4 sm:p-6 md:p-8 max-w-400 mx-auto w-full">
             <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 will-change-transform">
               {children}
             </div>
