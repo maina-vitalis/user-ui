@@ -5,7 +5,7 @@ export const store = configureStore({
   reducer: {
     auth: authReducer,
   },
-  devTools: process.env.NODE_ENV === "development",
+  devTools: true,
 });
 
 export type RootState = ReturnType<typeof store.getState>;
