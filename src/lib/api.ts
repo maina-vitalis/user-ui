@@ -1,4 +1,3 @@
-import { useAuthStore } from "./store/useAuthStore";
 import axios, { AxiosError } from "axios";
 
 type NestExceptionResponse = {

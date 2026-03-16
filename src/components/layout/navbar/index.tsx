@@ -32,7 +32,7 @@ const navbarLinks: NavbarLink[] = navLinks.map((label) => ({
 export function Navbar() {
   const [wishlistCount] = useState(3);
   const router = useRouter();
-  const { user, authStatus, setUser, setAuthStatus } = useAuthStore();
+  const { user, authStatus, clearAuth } = useAuthStore();
 
   const handleLogout = async () => {
     try {
@@ -40,8 +40,7 @@ export function Navbar() {
     } catch (error) {
       console.error("Logout failed:", error);
     } finally {
-      setUser(null);
-      setAuthStatus("guest");
+      clearAuth();
       router.push("/");
     }
   };

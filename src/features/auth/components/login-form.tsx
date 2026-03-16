@@ -29,7 +29,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Separator } from "@/components/ui/separator";
-import { getMe, login } from "@/features/auth/api/auth-api";
+import { login } from "@/features/auth/api/auth-api";
 import { useAuthStore } from "@/lib/store/useAuthStore";
 
 const loginSchema = z.object({
@@ -41,7 +41,7 @@ export type LoginFormValues = z.infer<typeof loginSchema>;
 export function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { setUser, setAuthStatus } = useAuthStore();
+  const { setAuthenticated } = useAuthStore();
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -54,10 +54,7 @@ export function LoginForm() {
   const mutation = useMutation({
     mutationFn: login,
     onSuccess: async (data) => {
-      const me = await getMe();
-      console.log(me);
-      setUser(me);
-      setAuthStatus("authenticated");
+      setAuthenticated(data.user);
       toast.success("Login successful");
       const redirectPath = searchParams.get("redirect");
       router.push(redirectPath || "/dashboard");

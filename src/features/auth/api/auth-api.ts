@@ -1,5 +1,6 @@
-import type {LoginFormValues} from "@/features/auth/components/login-form";
-import type {SignupFormValues} from "@/features/auth/components/signup-form";
+import type { LoginFormValues } from "@/features/auth/components/login-form";
+import type { SignupFormValues } from "@/features/auth/components/signup-form";
+import type { AuthUser } from "@/features/auth/types/auth.types";
 import api from "@/lib/api";
 
 export type VerifyOtpPayload = {
@@ -8,18 +9,12 @@ export type VerifyOtpPayload = {
 };
 
 interface AuthResponse {
-  accessToken: string | null;
+  user: AuthUser;
   message: string;
   status: string;
 }
 
-export interface MeResponse {
-  id: string;
-  email: string;
-  firstName?: string;
-  lastName?: string;
-  roles?: string[];
-}
+export type MeResponse = AuthUser;
 
 export const getMe = async () => {
   return api.get<MeResponse>("/api/users/me");

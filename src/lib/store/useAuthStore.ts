@@ -1,34 +1,31 @@
 import { create } from "zustand";
-import { devtools, persist } from "zustand/middleware";
+import { devtools } from "zustand/middleware";
+import type { StateCreator } from "zustand";
+import type { AuthUser } from "@/features/auth/types/auth.types";
 
-interface User {
-  id: string;
-  email: string;
-  firstName?: string;
-  lastName?: string;
-  roles?: string[];
-}
+type AuthStatus = "loading" | "authenticated" | "guest";
 
 interface AuthState {
-  user: User | null;
-  authStatus: "loading" | "authenticated" | "guest";
-  setUser: (user: User | null) => void;
-  setAuthStatus: (status: "loading" | "authenticated" | "guest") => void;
+  user: AuthUser | null;
+  authStatus: AuthStatus;
+  setUser: (user: AuthUser | null) => void;
+  setAuthStatus: (status: AuthStatus) => void;
+  setAuthenticated: (user: AuthUser) => void;
+  clearAuth: () => void;
 }
 
+const createAuthStore: StateCreator<AuthState> = (set) => ({
+  user: null,
+  authStatus: "loading",
+  setUser: (user) => set({ user }),
+  setAuthStatus: (authStatus) => set({ authStatus }),
+  setAuthenticated: (user) => set({ user, authStatus: "authenticated" }),
+  clearAuth: () => set({ user: null, authStatus: "guest" }),
+});
+
 export const useAuthStore = create<AuthState>()(
-  devtools(
-    persist(
-      (set) => ({
-        user: null,
-        authStatus: "loading",
-        setUser: (user) => set({ user }),
-        setAuthStatus: (authStatus) => set({ authStatus }),
-      }),
-      {
-        name: "auth-storage",
-        partialize: () => ({}), // persist nothing sensitive
-      },
-    ),
-  ),
+  devtools(createAuthStore, {
+    name: "auth-store",
+    enabled: process.env.NODE_ENV === "development",
+  }),
 );

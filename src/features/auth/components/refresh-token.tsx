@@ -9,7 +9,7 @@ export default function RefreshToken({
 }: {
   readonly children: React.ReactNode;
 }) {
-  const { setUser, setAuthStatus } = useAuthStore();
+  const { setAuthenticated, clearAuth } = useAuthStore();
   const hasRun = useRef(false);
 
   useEffect(() => {
@@ -19,16 +19,14 @@ export default function RefreshToken({
     const bootstrapAuth = async () => {
       try {
         const me = await getMe();
-        setUser(me);
-        setAuthStatus("authenticated");
+        setAuthenticated(me);
       } catch {
-        setUser(null);
-        setAuthStatus("guest");
+        clearAuth();
       }
     };
 
     bootstrapAuth();
-  }, [setUser, setAuthStatus]);
+  }, [setAuthenticated, clearAuth]);
 
   return <>{children}</>;
 }

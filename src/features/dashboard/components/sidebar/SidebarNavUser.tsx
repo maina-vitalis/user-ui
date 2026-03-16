@@ -57,7 +57,7 @@ export function SidebarNavUser({ user }: Readonly<SidebarNavUserProps>) {
   const { isMobile } = useSidebar();
   const router = useRouter();
   const [isLoggingOut, setIsLoggingOut] = useState(false);
-  const { setUser, setAuthStatus } = useAuthStore();
+  const { clearAuth } = useAuthStore();
 
   const handleLogout = async () => {
     if (isLoggingOut) {
@@ -71,8 +71,7 @@ export function SidebarNavUser({ user }: Readonly<SidebarNavUserProps>) {
     } catch (error) {
       console.error("Logout failed:", error);
     } finally {
-      setUser(null);
-      setAuthStatus("guest");
+      clearAuth();
       setIsLoggingOut(false);
       router.push("/");
     }
