@@ -1,6 +1,7 @@
 import { DashboardSidebar } from "@/features/dashboard/components/sidebar/DashboardSidebar";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { Separator } from "@/components/ui/separator";
+import { requireUser } from "@/lib/auth.ts/server";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -9,8 +10,6 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { requireUser } from "@/lib/auth.ts/server";
-import { redirect } from "next/navigation";
 
 export default async function DashboardLayout({
   children,
@@ -18,13 +17,16 @@ export default async function DashboardLayout({
   readonly children: React.ReactNode;
 }) {
   const user = await requireUser();
-  if (!user) {
-    return redirect("/auth/sign-in");
-  }
+
   return (
     <SidebarProvider>
       <div className="flex min-h-screen w-full bg-muted/40 dark:bg-background">
-        <DashboardSidebar />
+        <DashboardSidebar
+          user={{
+            name: user.name,
+            email: user.email,
+          }}
+        />
         <main className="flex-1 w-full flex flex-col min-h-screen transition-all duration-300 ease-in-out">
           {/* Header Bar */}
           <header className="sticky top-0 z-30 flex h-16 shrink-0 items-center justify-between gap-2 border-b border-border/60 bg-background/80 px-4 backdrop-blur-md transition-all duration-300">

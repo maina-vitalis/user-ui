@@ -13,7 +13,16 @@ import { SidebarNavItems } from "./SidebarNavItems";
 import { SidebarNavUser } from "./SidebarNavUser";
 import { ShoppingCart, Sparkles } from "lucide-react";
 
-export function DashboardSidebar() {
+interface DashboardSidebarProps {
+  user?: {
+    name: string;
+    email: string;
+    avatar?: string;
+    tier?: "silver" | "gold" | "platinum";
+  };
+}
+
+export function DashboardSidebar({ user }: Readonly<DashboardSidebarProps>) {
   return (
     <Sidebar collapsible="icon" className="border-r border-sidebar-border">
       {/* ─── Header / Brand ──────────────────────────────────────────────── */}
@@ -46,7 +55,7 @@ export function DashboardSidebar() {
 
       {/* ─── User Footer ─────────────────────────────────────────────────── */}
       <SidebarFooter className="px-3 py-3">
-        <SidebarNavUser />
+        <SidebarNavUser user={user} />
       </SidebarFooter>
 
       <SidebarRail />
