@@ -1,7 +1,8 @@
+"use client";
+
 import { DashboardSidebar } from "@/features/dashboard/components/sidebar/DashboardSidebar";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { Separator } from "@/components/ui/separator";
-import { requireUser } from "@/lib/auth.ts/server";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -10,13 +11,21 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
+import { useAppSelector } from "@/store/hooks";
+import { useRouter } from "next/navigation";
 
-export default async function DashboardLayout({
+export default function DashboardLayout({
   children,
 }: {
   readonly children: React.ReactNode;
 }) {
-  const user = await requireUser();
+  const router = useRouter();
+
+  const user = useAppSelector((state) => state.auth.user);
+
+  if (!user) {
+    return router.push("/auth/sign-in");
+  }
 
   return (
     <SidebarProvider>
