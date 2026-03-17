@@ -15,8 +15,8 @@ import { ShoppingCart, Sparkles } from "lucide-react";
 
 interface DashboardSidebarProps {
   user?: {
-    name: string;
-    email: string;
+    name?: string;
+    email?: string;
     avatar?: string;
     tier?: "silver" | "gold" | "platinum";
   };

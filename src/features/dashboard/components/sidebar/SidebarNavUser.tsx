@@ -32,8 +32,8 @@ import { clearAuth } from "@/store/slices/auth-slice";
 
 interface SidebarNavUserProps {
   user?: {
-    name: string;
-    email: string;
+    name?: string;
+    email?: string;
     avatar?: string;
     tier?: "silver" | "gold" | "platinum";
   };
@@ -78,20 +78,23 @@ export function SidebarNavUser({ user }: Readonly<SidebarNavUserProps>) {
     }
   };
 
-  const displayUser = user ?? {
-    name: "Vitalis Maina",
-    email: "vitalis@example.com",
-    tier: "gold" as const,
+  const displayUser = {
+    name: user?.name?.trim() || "User",
+    email: user?.email?.trim() || "No email",
+    avatar: user?.avatar,
+    tier: user?.tier ?? "silver",
   };
 
-  const initials = displayUser.name
-    .split(" ")
-    .map((n) => n[0])
-    .join("")
-    .toUpperCase()
-    .slice(0, 2);
+  const initials =
+    displayUser.name
+      .split(" ")
+      .map((n) => n[0])
+      .filter(Boolean)
+      .join("")
+      .toUpperCase()
+      .slice(0, 2) || "U";
 
-  const tier = displayUser.tier ?? "silver";
+  const tier = displayUser.tier;
   const tierInfo = tierConfig[tier];
 
   return (

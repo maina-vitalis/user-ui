@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/breadcrumb";
 import { useAppSelector } from "@/store/hooks";
 import { useRouter } from "next/navigation";
+import Loading from "../loading";
 
 export default function DashboardLayout({
   children,
@@ -21,9 +22,13 @@ export default function DashboardLayout({
 }) {
   const router = useRouter();
 
-  const user = useAppSelector((state) => state.auth.user);
+  const { authStatus, user } = useAppSelector((state) => state.auth);
 
-  if (!user) {
+  if (!user && authStatus === "loading") {
+    return <Loading />;
+  }
+
+  if (!user && authStatus === "guest") {
     return router.push("/auth/sign-in");
   }
 
@@ -32,8 +37,8 @@ export default function DashboardLayout({
       <div className="flex min-h-screen w-full bg-muted/40 dark:bg-background">
         <DashboardSidebar
           user={{
-            name: user.name,
-            email: user.email,
+            name: user?.name,
+            email: user?.email,
           }}
         />
         <main className="flex-1 w-full flex flex-col min-h-screen transition-all duration-300 ease-in-out">
