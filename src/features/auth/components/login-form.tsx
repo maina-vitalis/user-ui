@@ -8,6 +8,8 @@ import { useMutation } from "@tanstack/react-query";
 import { FcGoogle } from "react-icons/fc";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
+import { useState } from "react"; // ← Added
+import { Eye, EyeOff } from "lucide-react"; // ← Added
 
 import { getApiErrorMessage } from "@/lib/api";
 import { Button } from "@/components/ui/button";
@@ -44,6 +46,8 @@ export function LoginForm() {
   const searchParams = useSearchParams();
   const dispatch = useAppDispatch();
 
+  const [showPassword, setShowPassword] = useState(false); // ← Added
+
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -77,7 +81,7 @@ export function LoginForm() {
 
   return (
     <Card className="w-full max-w-md mx-auto border-0 shadow-lg">
-      <CardHeader className="space-y-2 pb-4  text-center">
+      <CardHeader className="space-y-2 pb-4 text-center">
         <CardTitle className="text-2xl font-semibold">Login</CardTitle>
         <CardDescription>Enter your credentials to sign in</CardDescription>
       </CardHeader>
@@ -126,6 +130,7 @@ export function LoginForm() {
                 )}
               />
 
+              {/* Password Field with Eye Icon */}
               <FormField
                 control={form.control}
                 name="password"
@@ -133,12 +138,26 @@ export function LoginForm() {
                   <FormItem>
                     <FormLabel>Password</FormLabel>
                     <FormControl>
-                      <Input
-                        placeholder="Enter your password"
-                        type="password"
-                        disabled={mutation.isPending}
-                        {...field}
-                      />
+                      <div className="relative">
+                        <Input
+                          placeholder="Enter your password"
+                          type={showPassword ? "text" : "password"}
+                          disabled={mutation.isPending}
+                          {...field}
+                        />
+                        <button
+                          type="button"
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                          onClick={() => setShowPassword(!showPassword)}
+                          disabled={mutation.isPending}
+                        >
+                          {showPassword ? (
+                            <EyeOff className="h-4 w-4" />
+                          ) : (
+                            <Eye className="h-4 w-4" />
+                          )}
+                        </button>
+                      </div>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -156,6 +175,7 @@ export function LoginForm() {
           </Form>
         </div>
       </CardContent>
+
       <CardFooter className="flex flex-col gap-3 pt-0">
         <Link
           href="/forgot-password"

@@ -42,7 +42,7 @@ export function HeroSection() {
           </p>
 
           <div className="mt-10 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            {user ? (
+            {user && (
               <Button
                 size="lg"
                 className="w-full sm:w-auto"
@@ -50,15 +50,6 @@ export function HeroSection() {
                 aria-label="Go to dashboard"
               >
                 <Link href="/my-account/profile">Go to Dashboard</Link>
-              </Button>
-            ) : (
-              <Button
-                size="lg"
-                className="w-full sm:w-auto"
-                asChild
-                aria-label="Start your store"
-              >
-                <Link href="/auth/sign-up">Start Your Store</Link>
               </Button>
             )}
             <Button

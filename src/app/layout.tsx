@@ -29,7 +29,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      suppressHydrationWarning
+      suppressHydrationWarning={true}
       className={cn("font-sans", notoSans.variable)}
     >
       <body className={`${inter.className} antialiased`}>

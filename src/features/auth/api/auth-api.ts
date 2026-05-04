@@ -22,7 +22,6 @@ export const getMe = async () => {
 
 export const login = async (loginData: LoginFormValues) => {
   const response: AuthResponse = await api.post("/api/auth/login", loginData);
-  console.log(response, "login");
   return response;
 };
 

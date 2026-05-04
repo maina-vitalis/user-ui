@@ -24,6 +24,16 @@ import { navLinks } from "@/features/landing/constants";
 import { DesktopMenu } from "./desktop-menu";
 import { MobileMenu } from "./mobile-menu";
 import type { NavbarLink } from "./types";
+import {
+  Dialog,
+  DialogContent,
+  DialogClose,
+  DialogDescription,
+  DialogTitle,
+  DialogHeader,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { VendorOnboardingForm } from "@/features/landing/components/vendor-onboarding-form";
 
 const navbarLinks: NavbarLink[] = navLinks.map((label) => ({
   label,
@@ -55,43 +65,58 @@ export function Navbar() {
 
   if (authStatus === "authenticated" && user) {
     authActions = (
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button variant="ghost" className="relative h-9 w-9 rounded-full">
-            <Avatar className="h-9 w-9 border">
-              <AvatarFallback className="bg-primary/10 text-primary">
-                {user.email.slice(0, 1).toUpperCase()}
-              </AvatarFallback>
-            </Avatar>
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent className="w-56" align="end" forceMount>
-          <DropdownMenuItem
-            onClick={handleProfileClick}
-            className="cursor-pointer"
-          >
-            <User className="mr-2 h-4 w-4" />
-            <span>Dashboard</span>
-          </DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem
-            onClick={handleLogout}
-            className="cursor-pointer text-destructive focus:text-destructive"
-          >
-            <LogOut className="mr-2 h-4 w-4" />
-            <span>Log out</span>
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
+      <div className="space-x-2">
+        <DropdownMenu>
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="outline">Become a vendor</Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-md">
+              <DialogHeader>
+                <DialogTitle>Start Your Journey as a Seller</DialogTitle>
+                <DialogDescription>
+                  Tell us a bit about your store to get started. You can update
+                  these details later.
+                </DialogDescription>
+              </DialogHeader>
+              <VendorOnboardingForm />
+            </DialogContent>
+          </Dialog>
+
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="relative h-9 w-9 rounded-full">
+              <Avatar className="h-9 w-9 border">
+                <AvatarFallback className="bg-primary/10 text-primary">
+                  {user.email.slice(0, 1).toUpperCase()}
+                </AvatarFallback>
+              </Avatar>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-56" align="end" forceMount>
+            <DropdownMenuItem
+              onClick={handleProfileClick}
+              className="cursor-pointer"
+            >
+              <User className="mr-2 h-4 w-4" />
+              <span>Dashboard</span>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              onClick={handleLogout}
+              className="cursor-pointer text-destructive focus:text-destructive"
+            >
+              <LogOut className="mr-2 h-4 w-4" />
+              <span>Log out</span>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
     );
   } else if (authStatus === "guest") {
     authActions = (
       <div className="flex items-center gap-2">
         <Button variant="outline" asChild>
           <Link href="/auth/sign-in">Sign In</Link>
-        </Button>
-        <Button asChild>
-          <Link href="/auth/sign-up">Become a Seller</Link>
         </Button>
       </div>
     );
