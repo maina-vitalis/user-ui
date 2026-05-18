@@ -5,14 +5,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { 
-  Home, 
-  RefreshCw, 
-  AlertTriangle, 
-  Bug,
-  Zap,
-  Shield
-} from "lucide-react";
+import { Home, RefreshCw, AlertTriangle, Bug, Zap, Shield } from "lucide-react";
 
 interface ErrorProps {
   error: Error & { digest?: string };
@@ -28,7 +21,7 @@ export default function Error({ error, reset }: ErrorProps) {
   return (
     <div className="min-h-screen bg-background">
       {/* Background Pattern */}
-      <div 
+      <div
         className="relative flex min-h-screen items-center justify-center overflow-hidden px-4"
         style={{
           backgroundImage:
@@ -37,7 +30,7 @@ export default function Error({ error, reset }: ErrorProps) {
       >
         {/* Grid Pattern */}
         <div className="pointer-events-none absolute inset-0 -z-10 bg-[linear-gradient(to_right,var(--color-border)_1px,transparent_1px),linear-gradient(to_bottom,var(--color-border)_1px,transparent_1px)] [background-size:40px_40px] opacity-20" />
-        
+
         {/* Floating Elements */}
         <div className="pointer-events-none absolute inset-0 -z-10">
           <div className="absolute top-20 left-10 animate-pulse delay-1000">
@@ -59,7 +52,10 @@ export default function Error({ error, reset }: ErrorProps) {
 
         <div className="container mx-auto max-w-4xl text-center">
           {/* Error Badge */}
-          <Badge variant="destructive" className="mb-6 text-sm animate-in fade-in slide-in-from-top-4 duration-1000">
+          <Badge
+            variant="destructive"
+            className="mb-6 text-sm animate-in fade-in slide-in-from-top-4 duration-1000"
+          >
             ⚠️ Something Went Wrong
           </Badge>
 
@@ -73,7 +69,8 @@ export default function Error({ error, reset }: ErrorProps) {
                 Oops! Something Went Wrong
               </h1>
               <p className="mx-auto max-w-2xl text-base text-muted-foreground md:text-lg">
-                We encountered an unexpected error. Our team has been notified and is working to fix this issue.
+                We encountered an unexpected error. Our team has been notified
+                and is working to fix this issue.
               </p>
             </div>
           </div>
@@ -82,7 +79,9 @@ export default function Error({ error, reset }: ErrorProps) {
           {process.env.NODE_ENV === "development" && (
             <Card className="mb-8 border-destructive/20 bg-destructive/5 animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-300">
               <CardContent className="p-6 text-left">
-                <h3 className="mb-2 font-semibold text-destructive">Error Details (Development Mode)</h3>
+                <h3 className="mb-2 font-semibold text-destructive">
+                  Error Details (Development Mode)
+                </h3>
                 <pre className="overflow-auto rounded bg-muted p-3 text-sm text-muted-foreground">
                   {error.message}
                 </pre>
@@ -103,7 +102,9 @@ export default function Error({ error, reset }: ErrorProps) {
                   <RefreshCw className="h-6 w-6 text-primary" />
                 </div>
                 <h3 className="font-semibold">Try Again</h3>
-                <p className="text-sm text-muted-foreground">Reload the page and try again</p>
+                <p className="text-sm text-muted-foreground">
+                  Reload the page and try again
+                </p>
               </CardContent>
             </Card>
 
@@ -113,7 +114,9 @@ export default function Error({ error, reset }: ErrorProps) {
                   <Home className="h-6 w-6 text-accent-foreground" />
                 </div>
                 <h3 className="font-semibold">Go Home</h3>
-                <p className="text-sm text-muted-foreground">Return to our homepage</p>
+                <p className="text-sm text-muted-foreground">
+                  Return to our homepage
+                </p>
               </CardContent>
             </Card>
           </div>
@@ -124,7 +127,12 @@ export default function Error({ error, reset }: ErrorProps) {
               <RefreshCw className="mr-2 h-4 w-4" />
               Try Again
             </Button>
-            <Button size="lg" variant="outline" asChild className="w-full sm:w-auto">
+            <Button
+              size="lg"
+              variant="outline"
+              asChild
+              className="w-full sm:w-auto"
+            >
               <Link href="/">
                 <Home className="mr-2 h-4 w-4" />
                 Back to Home
@@ -135,14 +143,14 @@ export default function Error({ error, reset }: ErrorProps) {
           {/* Help Text */}
           <div className="mt-12 animate-in fade-in slide-in-from-bottom-4 duration-1000 delay-1000">
             <p className="text-sm text-muted-foreground">
-              If this problem persists, please {" "}
-              <Link 
-                href="/contact" 
+              If this problem persists, please{" "}
+              <Link
+                href="/contact"
                 className="font-medium text-primary hover:underline transition-colors"
               >
                 contact our support team
-              </Link>
-              {" "} with the error details.
+              </Link>{" "}
+              with the error details.
             </p>
           </div>
         </div>
