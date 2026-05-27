@@ -45,8 +45,6 @@ export function VendorOnboardingForm({}: VendorFormProps) {
     },
   });
 
-  const router = useRouter();
-
   const { mutate, isPending } = useMutation({
     mutationFn: upgradeToVendor,
     onSuccess() {
