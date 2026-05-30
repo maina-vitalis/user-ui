@@ -46,6 +46,8 @@ export function Navbar() {
   const dispatch = useAppDispatch();
   const { user, authStatus } = useAppSelector((state) => state.auth);
 
+  console.log(user?.role);
+
   const handleLogout = async () => {
     try {
       await api.post("/api/auth/logout");
